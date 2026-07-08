@@ -15,17 +15,42 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from products.views import ProductViewSet, CategoryViewSet
 from orders.views import CartView, CheckoutView, OrderListView, OrderStatusUpdateView
 
+def api_welcome(request):
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <title>E-commerce API</title>
+        <style>
+        </style>
+    </head>
+    <body>
+        <h1>E-Commerce API</h1>
+        <p>Il server è attualmente <strong>ONLINE</strong> e funzionante.</p>
+        
+        <div>
+            <a href="/api/" class="btn">Esplora gli Endpoint API</a>
+            <a href="/admin/" class="btn" style="background-color: #28a745;">Pannello di Amministrazione</a>
+        </div>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content)
+
 router = DefaultRouter()
 router.register('products', ProductViewSet)
 router.register('categories', CategoryViewSet)
 
 urlpatterns = [
+    path('', api_welcome, name='home'),
     path('admin/', admin.site.urls),
     path('api/token/', TokenObtainPairView.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view()),
