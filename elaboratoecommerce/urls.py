@@ -46,9 +46,12 @@ def api_welcome(request):
     return HttpResponse(html_content)
 
 router = DefaultRouter()
+
+# Registrazione dei viewset
 router.register('products', ProductViewSet)
 router.register('categories', CategoryViewSet)
 
+# Mappatura degli url agli endpoint corrispondenti
 urlpatterns = [
     path('', api_welcome, name='home'),
     path('admin/', admin.site.urls),

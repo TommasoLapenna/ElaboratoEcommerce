@@ -15,5 +15,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def validate_price(self, value):
         if value <= 0:
+            # Ritorna un errore json per bad input
             raise serializers.ValidationError("Price must be positive.")
         return value

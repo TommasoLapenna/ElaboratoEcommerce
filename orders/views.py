@@ -5,6 +5,7 @@ from rest_framework import status
 from django.db import transaction
 from .models import Cart, CartItem, Order, OrderItem
 from products.models import Product
+from .serializers import OrderSerializer
 
 class CartView(APIView):
     permission_classes = [IsAuthenticated]
@@ -64,13 +65,12 @@ class OrderListView(APIView):
 
     def get(self, request):
         if request.user.role == 'manager':
-            orders = Order.objects.all()
+            orders = Order.objects.all().prefetch_related('items__product')
         else:
-            orders = Order.objects.filter(user=request.user)
-        data = [{"id": o.id, "status": o.status, "total": str(o.total)} for o in orders]
-        return Response(data)
-
-
+            orders = Order.objects.filter(user=request.user).prefetch_related('items__product')
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+    
 class OrderStatusUpdateView(APIView):
     permission_classes = [IsAuthenticated]
 

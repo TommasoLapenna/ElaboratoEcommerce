@@ -4,6 +4,7 @@ from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer
 from .permissions import IsManagerOrReadOnly
 
+# Ereditando la classe di DRF viewsets.ModelViewset, si ottengongono i metodi per la logica CRUD, che viene poi abbinata al router automatico del viewSet (in urls)
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
