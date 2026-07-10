@@ -53,6 +53,7 @@ router.register('categories', CategoryViewSet)
 
 # Mappatura degli url agli endpoint corrispondenti
 urlpatterns = [
+    path('', api_welcome),
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/token/', TokenObtainPairView.as_view()),
