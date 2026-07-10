@@ -9,6 +9,7 @@ from orders.models import Cart, CartItem, Order, OrderItem
 
 class Command(BaseCommand):
     help = "Scrpit per il seeding"
+    User = get_user_model()
 
     def add_arguments(self, parser):
         parser.add_argument('--reset', action='store_true',
@@ -16,7 +17,6 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        User = get_user_model()
         if options['reset']:
             self._reset()
 
