@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-m57(#(+1+%--h0*kz1#q3duo-r-4dfx0wykc*icod5tyi_4k=@'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# Su render è impostata l'env DEBUG su false, quindi a seconda di dove viene eseguita l'appo cambia DEBUG
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -61,7 +61,6 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,17 +93,21 @@ WSGI_APPLICATION = 'elaboratoecommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.sqlite3',
-    #    'NAME': BASE_DIR / 'db.sqlite3',
-    #}
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/mysite',
-        conn_max_age=600
-    )
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            # Replace this value with your local database's connection string.
+            default='postgresql://postgres:postgres@localhost:5432/mysite',
+            conn_max_age=600
+        )
+    }
 
 
 # Password validation
@@ -145,11 +148,7 @@ USE_TZ = True
 # Per la visualizzazione correta del deploy online dell'app
 STATIC_URL = '/static/'
 if not DEBUG:
-    #STATIC_ROOT = BASE_DIR / 'staticfiles'
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    #STORAGES = {
-    #        "staticfiles": {
-    #        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    #    },
-    #}
+
