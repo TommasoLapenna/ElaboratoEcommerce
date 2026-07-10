@@ -127,7 +127,7 @@ class Command(BaseCommand):
             ('pending', [('clean-code', 1), ('french-press', 1)]),
         ]
         for status, items in order_specs:
-            order = Order.objects.create(user=customer, status=status, total=0)
+            order = Order.objects.create(user=customer, status=status, total_price=0)
             total = 0
             for slug, qty in items:
                 product = products.get(slug)
