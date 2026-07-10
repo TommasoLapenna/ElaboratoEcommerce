@@ -23,7 +23,7 @@ class Command(BaseCommand):
         self.stdout.write("Seeding users")
         users = self._seed_users()
 
-        self.stdout.write("Seeding categories and products...")
+        self.stdout.write("Seeding categories and products")
         products = self._seed_catalog()
 
         self.stdout.write("Seeding cart")
