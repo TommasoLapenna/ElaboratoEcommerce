@@ -4,7 +4,7 @@ from django.db import transaction
 from products.models import Category, Product
 from orders.models import Cart, CartItem, Order, OrderItem
 
-User = get_user_model()
+
 
 
 class Command(BaseCommand):
@@ -16,6 +16,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
+        User = get_user_model()
         if options['reset']:
             self._reset()
 
