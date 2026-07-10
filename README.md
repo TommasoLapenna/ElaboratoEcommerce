@@ -41,6 +41,7 @@ python manage.py runserver
 | Customer  | user_demo    | user12345    |
 
 ## Deployment
+https://mysite-7bsf.onrender.com
 
 ## API Endpoints
 | Method   | URL                      | Auth  | Role            | Request body                      | Response               | Description                  |
