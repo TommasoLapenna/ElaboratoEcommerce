@@ -5,11 +5,11 @@ from products.models import Category, Product
 from orders.models import Cart, CartItem, Order, OrderItem
 
 
-
+User = get_user_model()
 
 class Command(BaseCommand):
     help = "Scrpit per il seeding"
-    User = get_user_model()
+
 
     def add_arguments(self, parser):
         parser.add_argument('--reset', action='store_true',
