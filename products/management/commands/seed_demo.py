@@ -136,5 +136,5 @@ class Command(BaseCommand):
                     continue
                 OrderItem.objects.create(order=order, product=product, quantity=qty, price=product.price)
                 total += product.price * qty
-            order.total = total
+            order.total_price = total
             order.save()

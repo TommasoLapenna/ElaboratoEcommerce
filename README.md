@@ -79,6 +79,7 @@ Il progetto contiene le seguenti applicazioni:
 - `accounts`
 - `products`
 - `orders`
+Nella sezione Database sono elencati i modelli che queste applicazioni gestiscono.
 
 ## Esecuzione Locale
 Per l'esecuzione in locale è necessario avere python installto, poi eseguire i seguenti comandi:
@@ -117,6 +118,9 @@ I modelli usati nel database, distribuiti tra le tre applicazioni, sono:
 ## Deployment
 Il depoly è stato eseguito su Render:
 https://mysite-7bsf.onrender.com
+
+>[!IMPORTANT] Nota
+> Render gratuito
 
 ## API Endpoints
 | Metodo   | URL                      | Auth  | Ruolo           | Body della richiesta              | Risposta               | Descrizione                                |
@@ -182,12 +186,14 @@ https://mysite-7bsf.onrender.com
 Per testare le funzionalità, eseguire il seguente workflow:
 - Se si vuole testare in locale: 
   ```bash 
-  export BASE=":8000""
+  export BASE=":8000"
   ```
 - Se si vuole testare sul deploy: 
   ```bash 
   export BASE="https://mysite-7bsf.onrender.com"
   ```
+
+In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, per semplictà l'id usato è sempre 1, questo può tranquillamente essere cambiato.
 
 1. **Accesso Pubblico:**
     ```bash
@@ -211,28 +217,28 @@ Per testare le funzionalità, eseguire il seguente workflow:
     ```
    (Visualizzazione e aggiunta di un prodotto)
 
-
+ 
 4. **Checkout:**
     ```bash
    http POST $BASE/api/checkout/ "Authorization:Bearer $TOKEN"
     http GET $BASE/api/orders/ "Authorization:Bearer $TOKEN"
     ```
-   (Passaggio da carrello ad ordine, visualizzazione degli ordini)
+   (Ordinazione dei prodotti nel carrello, visualizzazione degli ordini)
 
 
 5. **Azioni Vietate:**
     ```bash
     http POST $BASE/api/products/ "Authorization:Bearer $TOKEN" name=Hack slug=hack price=1 stock=1 category=electronics
     ```
-   (Cliente che prova ad aggiungere un prodotto al catalogo, viene restuito 403 Forbidden)
+   (Cliente che prova ad aggiungere un prodotto al catalogo, viene restituito 403 Forbidden)
    
     ```bash
    http POST $BASE/api/token/ username=user2_demo password=user12345
-    export TOKEN2="<paste access token>"
-    http GET $BASE/api/cart/ "Authorization:Bearer $TOKEN2"     # expect empty
-    http GET $BASE/api/orders/ "Authorization:Bearer $TOKEN2"
+    export TOKEN2="<copiare il token qui( (come in precedenza)>"
+    http GET $BASE/api/cart/1 "Authorization:Bearer $TOKEN2"    
+    http GET $BASE/api/orders/1 "Authorization:Bearer $TOKEN2"
     ```
-   (Un cliente prova ad accedere al carello e agli ordini di un altro cliente)
+   (Un cliente prova ad accedere al carrello e agli ordini di un altro cliente)
 
 
 6. **Login Manager:**
@@ -241,7 +247,7 @@ Per testare le funzionalità, eseguire il seguente workflow:
     ```
    Come per il login come customer di prima, dal JSON di risposta si copia il token `"access"` e si imposta una variabile
    ```bash
-   export MTOKEN=""
+   export MTOKEN="<copiare il token qui>"
    ```
    (Accesso come manager)
    ```bash
@@ -259,9 +265,8 @@ Per testare le funzionalità, eseguire il seguente workflow:
     ```
    (in ordine: visualizzazione, creazione, aggioramento e rimozione dei prodotti)
 
-
-8. **Aggiornamento dello stato di un ordine:**
+8. **Errore di Validazione:**
     ```bash
-    http PATCH $BASE/api/orders/1/status/
-   ```
-   (Aggiornamento dello stato dell'ordine, riservato al manager)
+    http POST $BASE/api/products/ "Authorization:Bearer $MTOKEN" name=Bad slug=bad price=-5 stock=1 category=electronics
+    ```
+   (Restituisce un errore 400 con messaggio JSON specfico)
