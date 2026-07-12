@@ -4,33 +4,35 @@
 - Django / Django REST Framework
 
 ## Descrizione
-L'applicazione fornisce una REST API per un e-commerce che permette di visualizzare i prodotti, aggiungerli al carello e effettuare gli ordini. Tutto ciò è monitorato dagli store manager, che hanno accesso a tutte queste informazioni.
+L'applicazione fornisce una REST API per un e-commerce che permette di visualizzare i prodotti, aggiungerli al carello ed effettuare gli ordini. Tutto ciò è monitorato dagli store manager, che hanno accesso a tutte queste informazioni.
 
 ## Featuers
 - **Customer:** 
   - Navigazioni tra i prodotti e delle categorie
   - Registrazione e login, JWT
-  - Gestione del proprio carrello, checkout dell'ordine
-  - Visualizzazione la propria cronologia degli ordini
+  - Gestione del proprio carrello, checkout dell'ordine (utente loggato)
+  - Visualizzazione della propria cronologia degli ordini (utente loggato)
 
 - **Manager:**
   - CRUD completo sulle tabelle dei prodotti e delle categorie
   - Visualizzazione ti tutti gli ordini, aggiornamento dello stato di essi
 
+È inoltre possibile accedere al pannello di controllo di django come admin (credenziali fornite in Account Demo)
+
 ## Esecuzione Locale
-Per l'esecuzione in locale è necessario avere python installto, poi eseguire i seguenti comandi:
+Per l'esecuzione in locale è necessario avere python installato, poi eseguire i seguenti comandi:
 ```bash
 git clone https://github.com/TommasoLapenna/ElaboratoEcommerce.git
 cd ElaboratoEcommerce
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py runserver
 ```
+Andare poi a -> http://127.0.0.1:8000/
 
-## Struttura
-### Struttura dei file
+## Struttura dei file
 ```
 ElaboratoEcommerce/
 ├── manage.py
@@ -108,7 +110,19 @@ I modelli usati nel database, distribuiti tra le tre applicazioni, sono:
 - **Category e Products:** presenti in `products/models.py`, descrivono il catalogo dei prodotti.
 - **Cart e CartItem:** presenti in `orders/models.py`, rappresentano il carrello.
 - **Order e OrderItem:** presenti in `orders/models.py`, rappresentano gli ordini.
-## Account Demo
+
+
+
+| Relazione                             | Tipo         | `on_delete` |
+|---------------------------------------|--------------|-------------|
+| Category -> Product                   | One-to-Many  | `CASCADE`   |
+| User -> Cart                          | One-to-One   | `CASCADE`   |
+| Cart <-> Product (tramite CartItem)   | Many-to-Many | `CASCADE`   |
+| User -> Order                         | One-to-Many  | `CASCADE`   |
+| Order <-> Product (tramite OrderItem) | Many-to-Many | `PROTECT`   |
+
+
+# Account Demo
 
 | Ruolo     | Username     | Password     |
 |-----------|--------------|--------------|
@@ -118,26 +132,28 @@ I modelli usati nel database, distribuiti tra le tre applicazioni, sono:
 | Customer  | user2_demo   | user12345    |
 
 ## Deployment
-Il depoly è stato eseguito su Render:
+Il deploy è stato eseguito su Render (piano gratuito):
 https://mysite-7bsf.onrender.com
 
 ## API Endpoints
-| Metodo   | URL                      | Auth  | Ruolo           | Body della richiesta              | Risposta               | Descrizione                                |
-|----------|--------------------------|-------|-----------------|-----------------------------------|------------------------|--------------------------------------------|
-| POST     | /api/auth/register/      | No    | any             | `{"username","email","password"}` | 201 user               | Registrazione utente                       |
-| POST     | /api/token/              | No    | any             | `{"username","password"}`         | 200 `{access,refresh}` | Login                                      |
-| POST     | /api/token/refresh/      | No    | any             | `{"refresh"}`                     | 200 `{access}`         | Refresh del token                          |
-| GET      | /api/auth/me/            | Yes   | any             | –                                 | user object            | Visualizzazione account                    |
-| GET      | /api/products/           | No    | any             | –                                 | list                   | Catalogo del prodotti                      |
-| POST     | /api/products/           | Yes   | manager         | product fields                    | 201                    | Crea un prodotto                           |
-| PATCH    | /api/products/<id>/      | Yes   | manager         | partial fields                    | 200                    | Aggiorna i dati di un prodotto             |
-| DELETE   | /api/products/<id>/      | Yes   | manager         | –                                 | 204                    | Cancella un prodotto                       |
-| GET/POST | /api/categories/         | mixed | manager (write) | category fields                   | –                      | Gestione categiore                         |
-| GET      | /api/cart/               | Yes   | customer        | –                                 | items                  | Visualizzazione del carrello               |
-| POST     | /api/cart/               | Yes   | customer        | `{"product_id","quantity"}`       | 201                    | Aggiungi al carrello                       |
-| POST     | /api/checkout/           | Yes   | customer        | –                                 | 201 order              | Passaggio da carrello ad ordine (Checkout) |
-| GET      | /api/orders/             | Yes   | any             | –                                 | list                   | Gestione degli ordini                      |
-| PATCH    | /api/orders/<id>/status/ | Yes   | manager         | `{"status"}`                      | 200                    | Aggiornamento stato ordine                 |
+| Metodo   | URL                      | Auth  | Ruolo    | Body della richiesta              | Risposta               | Descrizione                                |
+|----------|--------------------------|-------|----------|-----------------------------------|------------------------|--------------------------------------------|
+| POST     | /api/auth/register/      | No    | any      | `{"username","email","password"}` | 201 user               | Registrazione utente                       |
+| POST     | /api/token/              | No    | any      | `{"username","password"}`         | 200 `{access,refresh}` | Login                                      |
+| POST     | /api/token/refresh/      | No    | any      | `{"refresh"}`                     | 200 `{access}`         | Refresh del token                          |
+| GET      | /api/auth/me/            | Yes   | any      | –                                 | user object            | Visualizzazione account                    |
+| GET      | /api/products/           | No    | any      | –                                 | list                   | Catalogo del prodotti                      |
+| POST     | /api/products/           | Yes   | manager  | product fields                    | 201                    | Crea un prodotto                           |
+| PATCH    | /api/products/{id}/      | Yes   | manager  | partial fields                    | 200                    | Aggiorna i dati di un prodotto             |
+| DELETE   | /api/products/{id}/      | Yes   | manager  | –                                 | 204                    | Cancella un prodotto                       |
+| GET/POST | /api/categories/         | mixed | manager  | category fields                   | –                      | Gestione categiore                         |
+| GET      | /api/cart/               | Yes   | customer | –                                 | items                  | Visualizzazione del carrello               |
+| POST     | /api/cart/               | Yes   | customer | `{"product_id","quantity"}`       | 201                    | Aggiungi al carrello                       |
+| POST     | /api/checkout/           | Yes   | customer | –                                 | 201 order              | Passaggio da carrello ad ordine (Checkout) |
+| GET      | /api/orders/             | Yes   | any      | –                                 | list                   | Gestione degli ordini                      |
+| PATCH    | /api/orders/{id}/status/ | Yes   | manager  | `{"status"}`                      | 200                    | Aggiornamento stato ordine                 |
+
+/admin -> Pannello di Controllo
 
 ## Esempi di risposta
 **Registrazione (POST /api/auth/register/)**
@@ -192,15 +208,16 @@ Per testare le funzionalità, eseguire il seguente workflow:
   export BASE="https://mysite-7bsf.onrender.com"
   ```
 
-In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, per senplictà l'id usato è sempre 1, questo può tranquillamente essere cambiato.
+In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, per semplictà l'id usato è sempre 1, questo può tranquillamente essere cambiato.
 
 1. **Accesso Pubblico:**
     ```bash
     http GET $BASE/api/products/
     http GET $BASE/api/categories/
     ```
-2. **Login come cliente:**
+2. **Registrazione e Login come cliente:**
     ```bash
+   http POST $BASE/api/auth/register/ username=nuovo_utente email=nuovo@utente.com password=password123
    http POST $BASE/api/token/ username=user_demo password=user12345
    ```
    Dal JSON restituito, copiare il token `"access"` fornito, e per praticità impostarlo come variabile, poi eseguire l'autentizazione:
@@ -225,11 +242,11 @@ In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, 
    (Ordinazione dei prodotti nel carrello, visualizzazione degli ordini)
 
 
-5. **Azioni Vietate:**
+5. **Azioni Vietate e Ristrette:**
     ```bash
     http POST $BASE/api/products/ "Authorization:Bearer $TOKEN" name=Hack slug=hack price=1 stock=1 category=electronics
     ```
-   (Cliente che prova ad aggiungere un prodotto al catalogo, viene restituito 403 Forbidden)
+   (Cliente che prova ad aggiungere un prodotto al catalogo, viene restituito un errore)
    
     ```bash
    http POST $BASE/api/token/ username=user2_demo password=user12345
@@ -237,10 +254,10 @@ In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, 
     http GET $BASE/api/cart/1 "Authorization:Bearer $TOKEN2"    
     http GET $BASE/api/orders/1 "Authorization:Bearer $TOKEN2"
     ```
-   (Un cliente prova ad accedere al carrello e agli ordini di un altro cliente)
+   (Un cliente vede solo i suoi ordini e il suo carrello, in questo caso entrambi vuoti)
 
 
-6. **Login Manager:**
+6. **Login come Manager:**
     ```bash
     http POST $BASE/api/token/ username=manager_demo password=manager12345
     ```
@@ -262,10 +279,10 @@ In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, 
     http PATCH $BASE/api/products/1/ "Authorization:Bearer $MTOKEN" name=TV slug=tv price=2 stock=2 category=electronics
     http DELETE $BASE/api/products/1/ "Authorization:Bearer $MTOKEN"
     ```
-   (in ordine: visualizzazione, creazione, aggioramento e rimozione dei prodotti)
+   (in ordine: visualizzazione, creazione, aggiornamento e rimozione dei prodotti)
 
 8. **Errore di Validazione:**
     ```bash
     http POST $BASE/api/products/ "Authorization:Bearer $MTOKEN" name=Bad slug=bad price=-5 stock=1 category=electronics
     ```
-   (Restituisce un errore 400 con messaggio JSON specfico)
+   (Restituisce un errore 400 con messaggio JSON specifico)

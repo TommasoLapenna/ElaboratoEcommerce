@@ -38,7 +38,7 @@ def api_welcome(request):
         
         <div>
             <a href="/api/" class="btn">Esplora gli Endpoint API</a>
-            <a href="/admin/" class="btn" style="background-color: #28a745;">Pannello di Amministrazione</a>
+            <a href="/admin/" class="btn" style="background-color: green;">Pannello di Amministrazione</a>
         </div>
     </body>
     </html>
