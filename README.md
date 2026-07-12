@@ -10,12 +10,24 @@ L'applicazione fornisce una REST API per un e-commerce che permette di visualizz
 - **Customer:** 
   - Navigazioni tra i prodotti e delle categorie
   - Registrazione e login, JWT
-  - Gestione del proprio carello, checkout dell'ordine
+  - Gestione del proprio carrello, checkout dell'ordine
   - Visualizzazione la propria cronologia degli ordini
 
 - **Manager:**
   - CRUD completo sulle tabelle dei prodotti e delle categorie
   - Visualizzazione ti tutti gli ordini, aggiornamento dello stato di essi
+
+## Esecuzione Locale
+Per l'esecuzione in locale è necessario avere python installto, poi eseguire i seguenti comandi:
+```bash
+git clone https://github.com/TommasoLapenna/ElaboratoEcommerce.git
+cd ElaboratoEcommerce
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+```
 
 ## Struttura
 ### Struttura dei file
@@ -76,22 +88,12 @@ ElaboratoEcommerce/
 ```
 
 Il progetto contiene le seguenti applicazioni:
-- `accounts`
-- `products`
-- `orders`
+- `accounts`: gestisce la creazione e validazione degli account
+- `products`: gestisce la creazione, rimozione, aggiornamento e visualizzazione dei prodotti 
+- `orders`: gestisce la creazione, rimozione, aggiornamento e visualizzazione degli ordini
 Nella sezione Database sono elencati i modelli che queste applicazioni gestiscono.
 
-## Esecuzione Locale
-Per l'esecuzione in locale è necessario avere python installto, poi eseguire i seguenti comandi:
-```bash
-git clone https://github.com/TommasoLapenna/ElaboratoEcommerce.git
-cd ElaboratoEcommerce
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
-```
+
 
 ## Demo Database
 `db.sqlite3` è il file del database SQLite.
@@ -119,9 +121,6 @@ I modelli usati nel database, distribuiti tra le tre applicazioni, sono:
 Il depoly è stato eseguito su Render:
 https://mysite-7bsf.onrender.com
 
->[!IMPORTANT] Nota
-> Render gratuito
-
 ## API Endpoints
 | Metodo   | URL                      | Auth  | Ruolo           | Body della richiesta              | Risposta               | Descrizione                                |
 |----------|--------------------------|-------|-----------------|-----------------------------------|------------------------|--------------------------------------------|
@@ -131,14 +130,14 @@ https://mysite-7bsf.onrender.com
 | GET      | /api/auth/me/            | Yes   | any             | –                                 | user object            | Visualizzazione account                    |
 | GET      | /api/products/           | No    | any             | –                                 | list                   | Catalogo del prodotti                      |
 | POST     | /api/products/           | Yes   | manager         | product fields                    | 201                    | Crea un prodotto                           |
-| PATCH    | /api/products/{id}/      | Yes   | manager         | partial fields                    | 200                    | Aggiorna i dati di un prodotto             |
-| DELETE   | /api/products/{id}/      | Yes   | manager         | –                                 | 204                    | Cancella un prodotto                       |
+| PATCH    | /api/products/<id>/      | Yes   | manager         | partial fields                    | 200                    | Aggiorna i dati di un prodotto             |
+| DELETE   | /api/products/<id>/      | Yes   | manager         | –                                 | 204                    | Cancella un prodotto                       |
 | GET/POST | /api/categories/         | mixed | manager (write) | category fields                   | –                      | Gestione categiore                         |
 | GET      | /api/cart/               | Yes   | customer        | –                                 | items                  | Visualizzazione del carrello               |
 | POST     | /api/cart/               | Yes   | customer        | `{"product_id","quantity"}`       | 201                    | Aggiungi al carrello                       |
 | POST     | /api/checkout/           | Yes   | customer        | –                                 | 201 order              | Passaggio da carrello ad ordine (Checkout) |
 | GET      | /api/orders/             | Yes   | any             | –                                 | list                   | Gestione degli ordini                      |
-| PATCH    | /api/orders/{id}/status/ | Yes   | manager         | `{"status"}`                      | 200                    | Aggiornamento stato ordine                 |
+| PATCH    | /api/orders/<id>/status/ | Yes   | manager         | `{"status"}`                      | 200                    | Aggiornamento stato ordine                 |
 
 ## Esempi di risposta
 **Registrazione (POST /api/auth/register/)**
@@ -181,7 +180,7 @@ https://mysite-7bsf.onrender.com
 
 
 ## Test con HTTPie
-È possibile testare le API con HTTPie, scaricandolo da https://httpie.io/ oppure attraverso il package manager del sistema operativo.
+È possibile testare le API con HTTPie, scaricandolo da https://httpie.io/ oppure attraverso il package manager del proprio sistema operativo.
 
 Per testare le funzionalità, eseguire il seguente workflow:
 - Se si vuole testare in locale: 
@@ -193,7 +192,7 @@ Per testare le funzionalità, eseguire il seguente workflow:
   export BASE="https://mysite-7bsf.onrender.com"
   ```
 
-In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, per semplictà l'id usato è sempre 1, questo può tranquillamente essere cambiato.
+In alcuni comandi, negli URL quando ci si riferisce ad un prodotto o un ordine, per senplictà l'id usato è sempre 1, questo può tranquillamente essere cambiato.
 
 1. **Accesso Pubblico:**
     ```bash

@@ -53,11 +53,11 @@ class CheckoutView(APIView):
                 item.product.stock -= item.quantity
                 item.product.save()
                 total += item.product.price * item.quantity
-            order.total = total
+            order.total_price = total
             order.save()
             cart.items.all().delete()
 
-        return Response({"order_id": order.id, "total": str(order.total)}, status=status.HTTP_201_CREATED)
+        return Response({"order_id": order.id, "total_price": str(order.total_price)}, status=status.HTTP_201_CREATED)
 
 
 class OrderListView(APIView):
